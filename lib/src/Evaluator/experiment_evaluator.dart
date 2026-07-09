@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
 
-import 'experiment_helper.dart';
 import '../MultiUserMode/Model/evaluation_context.dart';
 import '../Utils/gb_variation_meta.dart';
 
