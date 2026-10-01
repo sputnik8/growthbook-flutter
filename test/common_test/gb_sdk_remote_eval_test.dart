@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:growthbook_sdk_flutter/growthbook_sdk_flutter.dart';
 import 'package:growthbook_sdk_flutter/src/Cache/caching_manager.dart';
@@ -51,7 +53,8 @@ void main() {
         await expectLater(sdk.refresh(), completes);
       });
 
-      test('refreshHandler is called with true on successful remote eval', () async {
+      test('refreshHandler is called with true on successful remote eval',
+          () async {
         bool? handlerValue;
         final sdk = await buildSdk(
           remoteEval: true,
@@ -61,7 +64,8 @@ void main() {
         expect(handlerValue, isTrue);
       });
 
-      test('refreshHandler is called with false on remote eval failure', () async {
+      test('refreshHandler is called with false on remote eval failure',
+          () async {
         bool? handlerValue;
         await buildSdk(
           remoteEval: true,
@@ -83,7 +87,8 @@ void main() {
         await expectLater(sdk.refreshForRemoteEval(), completes);
       });
 
-      test('sends current attributes and forced variations in payload', () async {
+      test('sends current attributes and forced variations in payload',
+          () async {
         final sdk = await buildSdk(
           remoteEval: true,
           attributes: {'id': 'user-42', 'plan': 'pro'},

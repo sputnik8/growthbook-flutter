@@ -9,7 +9,6 @@ import 'package:growthbook_sdk_flutter/src/MultiUserMode/Model/global_context.da
 import 'package:growthbook_sdk_flutter/src/MultiUserMode/Model/options.dart';
 import 'package:growthbook_sdk_flutter/src/MultiUserMode/Model/user_context.dart';
 import 'package:growthbook_sdk_flutter/src/Network/lru_etag_cache.dart';
-import 'package:growthbook_sdk_flutter/src/StickyBucketService/sticky_bucket_service.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -108,7 +107,8 @@ void main() {
     // Cyclic prerequisite — lines 25 and 67
     // -----------------------------------------------------------------------
     group('cyclic prerequisite', () {
-      test('returns cyclicPrerequisite source and triggers featureUsageCallback',
+      test(
+          'returns cyclicPrerequisite source and triggers featureUsageCallback',
           () {
         // feat-a has parentCondition → feat-b
         // feat-b has parentCondition → feat-a  (creates a cycle)

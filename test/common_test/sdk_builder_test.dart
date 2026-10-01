@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -27,7 +29,9 @@ void main() {
         client: client,
         growthBookTrackingCallBack: (trackData) {},
         backgroundSync: false,
-      ).setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed).initialize();
+      )
+          .setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed)
+          .initialize();
 
       /// Test API key
       expect(sdk.context.apiKey, testApiKey);
@@ -66,7 +70,9 @@ void main() {
       manager.clearCache();
     });
 
-    test('- with initialization without throwing assertion error for wrong host url', () async {
+    test(
+        '- with initialization without throwing assertion error for wrong host url',
+        () async {
       final sdkInstance = GBSDKBuilderApp(
         apiKey: testApiKey,
         hostURL: testHostURL,
@@ -86,7 +92,9 @@ void main() {
         client: client,
         growthBookTrackingCallBack: (trackData) {},
         backgroundSync: false,
-      ).setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed).initialize();
+      )
+          .setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed)
+          .initialize();
       final featureValue = sdk.feature('some-feature');
       expect(featureValue.source, GBFeatureSource.unknownFeature);
       final result = sdk.run(GBExperiment(key: "some-feature"));
@@ -134,7 +142,8 @@ void main() {
       );
 
       final dataExpectedResult = utf8.encode(expectedResult);
-      final features = json.decode(utf8.decode(dataExpectedResult)) as Map<String, dynamic>;
+      final features =
+          json.decode(utf8.decode(dataExpectedResult)) as Map<String, dynamic>;
 
       expect(
         sdkInstance.features["testfeature1"]?.rules?[0].condition,
@@ -160,7 +169,9 @@ void main() {
           gbFeatures: {'some-feature': GBFeature(defaultValue: true)},
           onInitializationFailure: (e) => error = e,
           backgroundSync: false,
-        ).setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed).initialize();
+        )
+            .setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed)
+            .initialize();
 
         expect(error != null, true);
         expect(error?.error is DioException, true);
@@ -180,7 +191,9 @@ void main() {
         },
         refreshHandler: null,
         backgroundSync: false,
-      ).setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed).initialize();
+      )
+          .setRefreshHandler((refreshHandler) => refreshHandler = isRefreshed)
+          .initialize();
 
       sdkInstance.context.features = {
         'feature 1': GBFeature(defaultValue: true),
@@ -194,7 +207,8 @@ void main() {
               tracks: [
                 GBTrack(
                   experiment: GBExperiment(key: 'testExperimentKey'),
-                  result: GBExperimentResult(key: 'testExperimentResultKey', inExperiment: true),
+                  result: GBExperimentResult(
+                      key: 'testExperimentResultKey', inExperiment: true),
                 ),
               ],
             ),
@@ -208,5 +222,63 @@ void main() {
 
       expect(countTrackingCallback, equals(1));
     });
+
+    test(
+      'setRefreshHandlerV2 receives GBError on remote refresh failure',
+      () async {
+        const testApiKey = '<API_KEY>';
+        const testHostURL = 'https://example.growthbook.io/';
+        const attr = <String, String>{'test': 'test'};
+
+        bool? capturedSuccess;
+        GBError? capturedError;
+
+        await GBSDKBuilderApp(
+          apiKey: testApiKey,
+          hostURL: testHostURL,
+          attributes: attr,
+          client: const MockNetworkClient(error: true),
+          growthBookTrackingCallBack: (_) {},
+          backgroundSync: false,
+        ).setRefreshHandlerV2((success, error) {
+          capturedSuccess = success;
+          capturedError = error;
+        }).initialize();
+
+        expect(capturedSuccess, isFalse,
+            reason: 'V2 handler should be called with false on failure');
+        expect(capturedError, isNotNull,
+            reason:
+                'V2 handler should receive the GBError that caused the failure');
+      },
+    );
+
+    test(
+      'setRefreshHandlerV2 receives null error on successful refresh',
+      () async {
+        const testApiKey = '<API_KEY>';
+        const testHostURL = 'https://example.growthbook.io/';
+        const attr = <String, String>{'test': 'test'};
+
+        bool? capturedSuccess;
+        GBError? capturedError;
+
+        await GBSDKBuilderApp(
+          apiKey: testApiKey,
+          hostURL: testHostURL,
+          attributes: attr,
+          client: const MockNetworkClient(),
+          growthBookTrackingCallBack: (_) {},
+          backgroundSync: false,
+        ).setRefreshHandlerV2((success, error) {
+          capturedSuccess = success;
+          capturedError = error;
+        }).initialize();
+
+        expect(capturedSuccess, isTrue);
+        expect(capturedError, isNull,
+            reason: 'V2 handler should receive null error on success');
+      },
+    );
   });
 }
