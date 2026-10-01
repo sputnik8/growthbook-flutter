@@ -18,7 +18,8 @@ class ExperimentHelper {
     String key = '${result.hashAttribute ?? ""}'
         '${result.hashValue ?? ""}'
         '$experimentKey'
-        '${result.variationID}';
+        '${result.variationID}'
+        '${result.featureId ?? ""}';
 
     // Check if the key is already in the set of tracked experiments
     if (_trackedExperiments.contains(key)) {
@@ -30,5 +31,13 @@ class ExperimentHelper {
 
     // Return false to indicate the experiment was not previously tracked
     return false;
+  }
+
+  // Drop tracking state for a single featureId so the next evaluation fires
+  // the callback again. Call after attributes change to force re-emission of
+  // exposures for that feature. Matches by suffix since featureId is the
+  // final segment of the tracking key.
+  void removeTrackedExperimentByFeatureId(String featureId) {
+    _trackedExperiments.removeWhere((key) => key.endsWith(featureId));
   }
 }
